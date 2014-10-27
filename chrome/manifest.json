@@ -35,6 +35,7 @@
 		"cookies",
 		"tabs",
 		"notifications",
+		"storage",
 		"*://e-hentai.org/*",
 		"*://*.e-hentai.org/*",
 		"*://exhentai.org/*"

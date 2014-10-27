@@ -1,9 +1,19 @@
 function setHentaiCookies() {
 	try {
+		for(var k in chrome.storage.local) {
+			var m = k.match(/^cookie-(.+)$/);
+			if(m) {
+				var name = m[1];
+				var value = chrome.storage.local[k];
+				chrome.cookies.set({url:'http://exhentai.org/', domain:'.exhentai.org', name:name, path:'/', value:value});
+			}
+		}
+		
 		chrome.cookies.getAll({domain:'.e-hentai.org'}, function(got) {
 			for(var i = 0; i < got.length; i++) {
 				if(got[i].name.indexOf('ipb_') != -1 || got[i].name.indexOf('uconfig') != -1) {
 					chrome.cookies.set({url:'http://exhentai.org/', domain:'.exhentai.org', name:got[i].name, path:'/', value:got[i].value});
+					chrome.storage.local['cookie-' + got[i].name] = got[i].value;
 				}
 			}
 		});
@@ -32,5 +42,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		chrome.tabs.getSelected(null, function(tab) {
 			chrome.tabs.reload(tab.id);
 		});
+	}
+});
+
+chrome.windows.onCreated.addListener(function(win) {
+	if(win.incognito) {
+		setHentaiCookies();
 	}
 });
